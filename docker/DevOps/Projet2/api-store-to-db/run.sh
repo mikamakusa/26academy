@@ -1,0 +1,9 @@
+#!/bin/bash
+
+DBHOST=${DBHOST}
+DBBASE=${DBBASE}
+DBUSER=${DBUSER}
+DBPASS=${DBPASS}
+BRAC_API=${BRAC_API}
+
+python3 /opt/\_\_main\_\_.py -H $DBHOST -P 27017 -D $DBBASE -u $DBUSER -p $DBPASS -A $BRAC_API

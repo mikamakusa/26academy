@@ -1,0 +1,63 @@
+version: '2'
+
+services:
+  mysql:
+    image: mysql:5.7
+    container_name: db_mysql
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: "somewordpress"
+      MYSQL_DATABASE: "wordpress"
+      MYSQL_USER: "wordpress"
+      MYSQL_PASSWORD: "wordpress"
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    restart: always
+    environment:
+      WORDPRESS_DB_HOST: "mysql"
+      WORDPRESS_DB_USER: "wordpress"
+      WORDPRESS_DB_PASSWORD: "wordpress"
+      WORDPRESS_DB_NAME: "wordpress"
+
+----
+version: '2'
+
+services:
+  api-bracelet:
+    image: mikamakusa/api_bracelet
+    container_name: api_bracelet
+    restart: always
+
+services:
+  mongo:
+    image: mongo:4.0.2
+    container_name: db_mongo
+    environment:
+      MONGO_INITDB_DATABASE: "esante"
+      MONGO_INITDB_ROOT_USERNAME: "root"
+      MONGO_INITDB_ROOT_PASSWORD: "password"
+    restart: always
+
+  mongo-express:
+    image: mongo-express
+    container_name: mongo_express 
+    restart: always
+    environment:
+      ME_CONFIG_MONGODB_SERVER: "mongo"
+      ME_CONFIG_BASICAUTH_USERNAME: "root"
+      ME_CONFIG_BASICAUTH_PASSWORD: "password"
+      ME_CONFIG_MONGODB_ADMINUSERNAME: root
+      ME_CONFIG_MONGODB_ADMINPASSWORD: password
+
+  api-store:
+    image: mikamakusa/api_store
+    container_name: api_store
+    restart: always
+    environment:
+      DBHOST: "mongo"
+      DBBASE: "esante"
+      DBUSER: "root"
+      DBPASS: "password"
+      BRAC_API: "api-bracelet"
