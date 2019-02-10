@@ -9,8 +9,8 @@ ssh_keys = [
 
 droplets = [
   {
-    image = "rancher"
-    name = "centos-7-x64"
+    image = "centos-7-x64"
+    name = "rancher"
     region = "ams2"
     size = "s-4vcpu-8gb"
     backups = "false"
@@ -20,8 +20,8 @@ droplets = [
     ssh_key_id = "0"
   },
   {
-    image = "rancher"
-    name = "centos-7-x64"
+    image = "centos-7-x64"
+    name = "rancher"
     region = "ams2"
     size = "s-4vcpu-8gb"
     backups = "false"
@@ -31,8 +31,8 @@ droplets = [
     ssh_key_id = "1"
   },
   {
-    image = "rancher"
-    name = "centos-7-x64"
+    image = "centos-7-x64"
+    name = "rancher"
     region = "ams2"
     size = "s-4vcpu-8gb"
     backups = "false"

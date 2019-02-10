@@ -1,0 +1,59 @@
+---
+# tasks file for rancher
+
+- name: determine if we're already running an agent
+  shell: "docker ps | fgrep -q rancher/agent"
+  register: agent_installed
+  ignore_errors: true
+  changed_when: false
+  become: true
+  when: ansible_hostname == '26a-rancher-0'
+
+- name: Start the Rancher server
+  become: true
+  shell: "docker run -dit --name {{ ansible_hostname }} --restart unless-stopped -p 80:8080 -v /opt:/var/lib/mysql rancher/server:v1.6.25"
+  ignore_errors: true
+  when: not agent_installed|success and ansible_hostname == '26a-rancher-0'
+
+- name: wait for rancher server is up and running
+  become: true
+  wait_for:
+    delay: "600"
+    host: "127.0.0.1"
+    port: "80"
+  ignore_errors: true
+  when: not agent_installed|success and ansible_hostname == '26a-rancher-0'
+
+- name: Register Rancher server IP address
+  become: true
+  shell: hostname -I | awk -F " " '{print $1}'
+  regsiter: rancher_server_ip
+  ignore_errors: true
+  when: ansible_hostname == '26a-rancher-0'
+
+- name: Get Project Info
+  become: true
+  shell: "curl http://localhost/v2-beta/projects/ | jq '.data[].id'"
+  regsiter: rancher_server_project
+  ignore_errors: true
+  when: ansible_hostname == '26a-rancher-0'
+
+- name: Get ResgistrationTokenId
+  become: true
+  shell: "curl http://localhost/v2-beta/projects/{{ rancher_server_project.stdout }} | jq '.id'"
+  register: register_tokenid
+  ignore_errors: true
+  when: ansible_hostname == '26a-rancher-0'
+
+- name: Get RegistrationURL
+  become: true
+  shell: curl http://localhost/v2-beta/projects/{{ rancher_server_project.stdout }} | jq '.registrationUrl'
+  register: registration_url
+  ignore_errors: true
+  when: ansible_hostname == '26a-rancher-0'
+
+- name: Launch Rancher workers
+  become: true
+  shell: "docker run -dit --name {{ ansible_hostname }} --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.11 {{ registration_url.stdout }}"
+  ignore_errors: true
+  when: ansible_hostname != '26a-rancher-0'

@@ -1,0 +1,5 @@
+---
+# defaults file for docker
+
+docker_pass: 'Amakusa0101+'
+docker_login: 'mikamakusa'

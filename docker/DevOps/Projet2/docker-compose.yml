@@ -34,6 +34,9 @@ services:
     container_name: api_bracelet
     restart: always
 
+----
+version: '2'
+
 services:
   mongo:
     image: mongo:4.0.2
@@ -64,4 +67,4 @@ services:
       DBBASE: "esante"
       DBUSER: "root"
       DBPASS: "password"
-      BRAC_API: "api-bracelet"
+      BRAC_API: "82.196.11.167"

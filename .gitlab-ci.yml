@@ -1,0 +1,20 @@
+stages:
+  - terraform
+  - ansible
+
+terraform:
+  variables:
+  image: hashicorp/terraform:light
+  stage: terraform
+  script:
+    - rm -rf =terraform/resources/.terraform
+    - terraform init terraform/resources
+    - terraform apply -auto-approve -var-file=terraform/resources/dovars.tfvars -var 'do_token=992a7d0efe4c641c84745c7e1602b71d5a29e9b05d6be2b7c6c521ac137769de' terraform/resources
+
+ansible:
+  variables:
+    DO_API_TOKEN: "992a7d0efe4c641c84745c7e1602b71d5a29e9b05d6be2b7c6c521ac137769de"
+  image: ansible/centos7-ansible
+  stage: ansible
+  script:
+    - ansible-playbook ansible/docker.yml -i digitalocean.py --private-key=ssh_keys/26apro2
