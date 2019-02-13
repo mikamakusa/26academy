@@ -1,7 +1,5 @@
 image: centos:latest
 before_script:
-  - export DIGITALOCEAN_TOKEN=$DO_TOKEN
-  - export DO_API_TOKEN=$DO_TOKEN
   - yum install -y curl
 
 stages:
@@ -15,6 +13,7 @@ stages:
 deploy:
   stage: deploy
   before_script:
+    - export DIGITALOCEAN_TOKEN=$DO_TOKEN    
     - yum install -y unzip
     - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
     - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/
@@ -28,7 +27,9 @@ deploy:
 docker_install:
   stage: docker_install
   before_script:
-    - yum install -y ansible python-pip
+    - export DO_API_TOKEN=$DO_TOKEN
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
     - pip install --upgrade pip
     - pip install requests
     - chmod +x ansible/inventory.sh
@@ -39,7 +40,9 @@ docker_install:
 rancher_install:
   stage: rancher_install
   before_script:
-    - yum install -y ansible python-pip
+    - export DO_API_TOKEN=$DO_TOKEN
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
     - pip install --upgrade pip
     - pip install requests
     - chmod +x ansible/inventory.sh
@@ -50,7 +53,9 @@ rancher_install:
 rancher_check:
   stage: rancher_check
   before_script:
-    - yum install -y ansible python-pip
+    - export DO_API_TOKEN=$DO_TOKEN
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
     - pip install --upgrade pip
     - pip install requests
     - chmod +x ansible/inventory.sh
@@ -61,7 +66,9 @@ rancher_check:
 join_rancher:
   stage: join_rancher
   before_script:
-    - yum install -y ansible python-pip
+    - export DO_API_TOKEN=$DO_TOKEN
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
     - pip install --upgrade pip
     - pip install requests
     - chmod +x ansible/inventory.sh
@@ -72,6 +79,7 @@ join_rancher:
 clean:
   stage: clean
   before_script:
+    - export DIGITALOCEAN_TOKEN=$DO_TOKEN 
     - yum install -y unzip
     - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
     - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/

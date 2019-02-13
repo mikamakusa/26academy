@@ -18,5 +18,5 @@ resource "digitalocean_droplet" "do_droplet" {
   ipv6               = "${lookup(var.droplet[count.index],"ipv6")}"
   private_networking = "${lookup(var.droplet[count.index],"private_networking")}"
   ssh_keys           = ["${digitalocean_ssh_key.do_ssh_key.fingerprint}"]
-  tags               = ["${digitalocean_tag.do_tag.name}"]
+  tags               = ["${digitalocean_tag.do_tag.id}"]
 }
