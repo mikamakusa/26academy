@@ -5,5 +5,5 @@
   gather_facts: false
   become: true
   become_method: sudo
-  tasks:
+  roles:
     - rancher

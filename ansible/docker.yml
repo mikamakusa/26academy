@@ -1,9 +1,8 @@
 ---
 
 - hosts: docker
-  remote_user: root
   gather_facts: false
   become: true
   become_method: sudo
-  tasks:
+  roles:
     - docker

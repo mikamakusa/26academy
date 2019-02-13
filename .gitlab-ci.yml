@@ -1,6 +1,4 @@
 image: centos:latest
-before_script:
-  - yum install -y curl
 
 stages:
   - deploy
@@ -14,20 +12,24 @@ deploy:
   stage: deploy
   before_script:
     - export DIGITALOCEAN_TOKEN=$DO_TOKEN    
-    - yum install -y unzip
+    - yum install -y unzip curl
     - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
     - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/
     - chmod +x /opt/terraform
-    - /opt/terraform version
   script:
     - rm -rf terraform/resources/.terraform
     - /opt/terraform init terraform/resources
     - /opt/terraform apply -auto-approve -var-file=terraform/resources/dovars.tfvars terraform/resources
+  artifacts:
+    paths:
+    - terraform/resources/.terraform
+    - terraform/resources/terraform.tfstate
+    - terraform/resources/terraform.tfstate.backup
 
 docker_install:
   stage: docker_install
   before_script:
-    - export DO_API_TOKEN=$DO_TOKEN
+    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
     - yum install -y ansible python-pip jq
     - pip install --upgrade pip
@@ -36,55 +38,44 @@ docker_install:
     - sh ansible/inventory.sh
   script:
     - ansible-playbook ansible/docker.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2
+  artifacts:
+    - ansible/inventory.ini
 
 rancher_install:
   stage: rancher_install
   before_script:
-    - export DO_API_TOKEN=$DO_TOKEN
+    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
-    - yum install -y ansible python-pip jq
-    - pip install --upgrade pip
-    - pip install requests
-    - chmod +x ansible/inventory.sh
-    - sh ansible/inventory.sh
+    - yum install -y ansible
   script:
     - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "server"
 
 rancher_check:
   stage: rancher_check
   before_script:
-    - export DO_API_TOKEN=$DO_TOKEN
+    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
-    - yum install -y ansible python-pip jq
-    - pip install --upgrade pip
-    - pip install requests
-    - chmod +x ansible/inventory.sh
-    - sh ansible/inventory.sh
+    - yum install -y ansible
   script:
     - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "check"
 
 join_rancher:
   stage: join_rancher
   before_script:
-    - export DO_API_TOKEN=$DO_TOKEN
+    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
-    - yum install -y ansible python-pip jq
-    - pip install --upgrade pip
-    - pip install requests
-    - chmod +x ansible/inventory.sh
-    - sh ansible/inventory.sh
+    - yum install -y ansible
   script:
     - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "worker"
 
 clean:
   stage: clean
   before_script:
-    - export DIGITALOCEAN_TOKEN=$DO_TOKEN 
-    - yum install -y unzip
+    - export DIGITALOCEAN_TOKEN=$DO_TOKEN    
+    - yum install -y unzip curl
     - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
     - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/
     - chmod +x /opt/terraform
-    - /opt/terraform version
   script:
     - /opt/terraform init terraform/resources
     - /opt/terraform destroy -auto-approve -var-file=terraform/resources/dovars.tfvars terraform/resources
