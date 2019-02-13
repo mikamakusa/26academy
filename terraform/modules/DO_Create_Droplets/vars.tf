@@ -7,3 +7,5 @@ variable "ssh_key" {
 }
 
 variable "project" {}
+
+variable "tag" {}

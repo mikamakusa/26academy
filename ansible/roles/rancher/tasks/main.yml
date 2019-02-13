@@ -8,12 +8,16 @@
   changed_when: false
   become: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - server
 
 - name: Start the Rancher server
   become: true
   shell: "docker run -dit --name {{ ansible_hostname }} --restart unless-stopped -p 80:8080 -v /opt:/var/lib/mysql rancher/server:v1.6.25"
   ignore_errors: true
   when: not agent_installed|success and ansible_hostname == '26a-rancher-0'
+  tags:
+    - server
 
 - name: wait for rancher server is up and running
   become: true
@@ -23,6 +27,8 @@
     port: "80"
   ignore_errors: true
   when: not agent_installed|success and ansible_hostname == '26a-rancher-0'
+  tags:
+    - check
 
 - name: Register Rancher server IP address
   become: true
@@ -30,6 +36,8 @@
   regsiter: rancher_server_ip
   ignore_errors: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - worker
 
 - name: Get Project Info
   become: true
@@ -37,6 +45,8 @@
   regsiter: rancher_server_project
   ignore_errors: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - worker
 
 - name: Get ResgistrationTokenId
   become: true
@@ -44,6 +54,8 @@
   register: register_tokenid
   ignore_errors: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - worker
 
 - name: Get RegistrationURL
   become: true
@@ -51,9 +63,13 @@
   register: registration_url
   ignore_errors: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - worker
 
 - name: Launch Rancher workers
   become: true
   shell: "docker run -dit --name {{ ansible_hostname }} --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.11 {{ registration_url.stdout }}"
   ignore_errors: true
   when: ansible_hostname != '26a-rancher-0'
+  tags:
+    - worker

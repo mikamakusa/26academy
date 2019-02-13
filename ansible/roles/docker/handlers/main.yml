@@ -1,19 +1,19 @@
 ---
 # handlers file for docker
-- name: docker_start
+- name: docker start
   become: true
   systemd:
     name: docker
     state: started
     enabled: true
 
-- name: docker_stop
+- name: docker stop
   become: true
   systemd:
     name: docker
     state: stopped
 
-- name: docker_restart
+- name: docker restart
   become: true
   systemd:
     name: docker

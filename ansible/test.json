@@ -1,0 +1,561 @@
+[
+  {
+    "status": "active",
+    "kernel": null,
+    "volume_ids": [],
+    "locked": false,
+    "name": "blog1",
+    "backup_ids": [],
+    "created_at": "2019-01-26T18:21:14Z",
+    "snapshot_ids": [],
+    "size_slug": "s-3vcpu-1gb",
+    "networks": {
+      "v4": [
+        {
+          "type": "public",
+          "netmask": "255.255.255.0",
+          "ip_address": "146.185.129.123",
+          "gateway": "146.185.129.1"
+        }
+      ],
+      "v6": []
+    },
+    "next_backup_window": null,
+    "vcpus": 3,
+    "size": {
+      "price_monthly": 15,
+      "available": true,
+      "transfer": 3,
+      "price_hourly": 0.02232,
+      "regions": [
+        "ams2",
+        "ams3",
+        "blr1",
+        "fra1",
+        "lon1",
+        "nyc1",
+        "nyc2",
+        "nyc3",
+        "sfo1",
+        "sfo2",
+        "sgp1",
+        "tor1"
+      ],
+      "vcpus": 3,
+      "memory": 1024,
+      "disk": 60,
+      "slug": "s-3vcpu-1gb"
+    },
+    "image": {
+      "min_disk_size": 20,
+      "slug": null,
+      "name": "hugo",
+      "created_at": "2016-06-28T15:21:49Z",
+      "id": 18154097,
+      "regions": [
+        "ams2"
+      ],
+      "distribution": "Ubuntu",
+      "type": "snapshot",
+      "public": false,
+      "size_gigabytes": 2.04
+    },
+    "memory": 1024,
+    "region": {
+      "available": true,
+      "sizes": [
+        "512mb",
+        "1gb",
+        "s-1vcpu-1gb",
+        "s-3vcpu-1gb",
+        "s-1vcpu-2gb",
+        "2gb",
+        "s-2vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-4gb",
+        "4gb",
+        "s-4vcpu-8gb",
+        "8gb",
+        "m-1vcpu-8gb",
+        "16gb",
+        "s-6vcpu-16gb",
+        "m-16gb",
+        "s-8vcpu-32gb",
+        "m-32gb",
+        "32gb",
+        "s-12vcpu-48gb",
+        "48gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata",
+        "install_agent",
+        "image_transfer"
+      ],
+      "name": "Amsterdam 2",
+      "slug": "ams2"
+    },
+    "disk": 60,
+    "id": 130425921,
+    "tags": [],
+    "features": []
+  },
+  {
+    "status": "active",
+    "kernel": null,
+    "volume_ids": [],
+    "locked": false,
+    "name": "bastion",
+    "backup_ids": [],
+    "created_at": "2019-02-06T20:59:26Z",
+    "snapshot_ids": [],
+    "size_slug": "s-3vcpu-1gb",
+    "networks": {
+      "v4": [
+        {
+          "type": "public",
+          "netmask": "255.255.255.0",
+          "ip_address": "146.185.139.230",
+          "gateway": "146.185.139.1"
+        }
+      ],
+      "v6": []
+    },
+    "next_backup_window": null,
+    "vcpus": 3,
+    "size": {
+      "price_monthly": 15,
+      "available": true,
+      "transfer": 3,
+      "price_hourly": 0.02232,
+      "regions": [
+        "ams2",
+        "ams3",
+        "blr1",
+        "fra1",
+        "lon1",
+        "nyc1",
+        "nyc2",
+        "nyc3",
+        "sfo1",
+        "sfo2",
+        "sgp1",
+        "tor1"
+      ],
+      "vcpus": 3,
+      "memory": 1024,
+      "disk": 60,
+      "slug": "s-3vcpu-1gb"
+    },
+    "image": {
+      "min_disk_size": 20,
+      "slug": "centos-7-x64",
+      "name": "7.5 x64",
+      "created_at": "2018-05-19T08:31:48Z",
+      "id": 34487567,
+      "regions": [
+        "nyc1",
+        "sfo1",
+        "nyc2",
+        "ams2",
+        "sgp1",
+        "lon1",
+        "nyc3",
+        "ams3",
+        "fra1",
+        "tor1",
+        "sfo2",
+        "blr1"
+      ],
+      "distribution": "CentOS",
+      "type": "snapshot",
+      "public": true,
+      "size_gigabytes": 0.44
+    },
+    "memory": 1024,
+    "region": {
+      "available": true,
+      "sizes": [
+        "512mb",
+        "1gb",
+        "s-1vcpu-1gb",
+        "s-3vcpu-1gb",
+        "s-1vcpu-2gb",
+        "2gb",
+        "s-2vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-4gb",
+        "4gb",
+        "s-4vcpu-8gb",
+        "8gb",
+        "m-1vcpu-8gb",
+        "16gb",
+        "s-6vcpu-16gb",
+        "m-16gb",
+        "s-8vcpu-32gb",
+        "m-32gb",
+        "32gb",
+        "s-12vcpu-48gb",
+        "48gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata",
+        "install_agent",
+        "image_transfer"
+      ],
+      "name": "Amsterdam 2",
+      "slug": "ams2"
+    },
+    "disk": 60,
+    "id": 132010205,
+    "tags": [],
+    "features": []
+  },
+  {
+    "status": "active",
+    "kernel": null,
+    "volume_ids": [],
+    "locked": false,
+    "name": "26a-rancher-2",
+    "backup_ids": [],
+    "created_at": "2019-02-11T22:12:01Z",
+    "snapshot_ids": [],
+    "size_slug": "s-4vcpu-8gb",
+    "networks": {
+      "v4": [
+        {
+          "type": "public",
+          "netmask": "255.255.255.0",
+          "ip_address": "37.139.28.80",
+          "gateway": "37.139.28.1"
+        }
+      ],
+      "v6": []
+    },
+    "next_backup_window": null,
+    "vcpus": 4,
+    "size": {
+      "price_monthly": 40,
+      "available": true,
+      "transfer": 5,
+      "price_hourly": 0.05952,
+      "regions": [
+        "ams2",
+        "ams3",
+        "blr1",
+        "fra1",
+        "lon1",
+        "nyc1",
+        "nyc2",
+        "nyc3",
+        "sfo1",
+        "sfo2",
+        "sgp1",
+        "tor1"
+      ],
+      "vcpus": 4,
+      "memory": 8192,
+      "disk": 160,
+      "slug": "s-4vcpu-8gb"
+    },
+    "image": {
+      "min_disk_size": 20,
+      "slug": "centos-7-x64",
+      "name": "7.5 x64",
+      "created_at": "2018-05-19T08:31:48Z",
+      "id": 34487567,
+      "regions": [
+        "nyc1",
+        "sfo1",
+        "nyc2",
+        "ams2",
+        "sgp1",
+        "lon1",
+        "nyc3",
+        "ams3",
+        "fra1",
+        "tor1",
+        "sfo2",
+        "blr1"
+      ],
+      "distribution": "CentOS",
+      "type": "snapshot",
+      "public": true,
+      "size_gigabytes": 0.44
+    },
+    "memory": 8192,
+    "region": {
+      "available": true,
+      "sizes": [
+        "512mb",
+        "1gb",
+        "s-1vcpu-1gb",
+        "s-3vcpu-1gb",
+        "s-1vcpu-2gb",
+        "2gb",
+        "s-2vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-4gb",
+        "4gb",
+        "s-4vcpu-8gb",
+        "8gb",
+        "m-1vcpu-8gb",
+        "16gb",
+        "s-6vcpu-16gb",
+        "m-16gb",
+        "s-8vcpu-32gb",
+        "m-32gb",
+        "32gb",
+        "s-12vcpu-48gb",
+        "48gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata",
+        "install_agent",
+        "image_transfer"
+      ],
+      "name": "Amsterdam 2",
+      "slug": "ams2"
+    },
+    "disk": 160,
+    "id": 132690655,
+    "tags": [],
+    "features": []
+  },
+  {
+    "status": "active",
+    "kernel": null,
+    "volume_ids": [],
+    "locked": false,
+    "name": "26a-rancher-1",
+    "backup_ids": [],
+    "created_at": "2019-02-11T22:12:01Z",
+    "snapshot_ids": [],
+    "size_slug": "s-4vcpu-8gb",
+    "networks": {
+      "v4": [
+        {
+          "type": "public",
+          "netmask": "255.255.255.0",
+          "ip_address": "37.139.31.233",
+          "gateway": "37.139.31.1"
+        }
+      ],
+      "v6": []
+    },
+    "next_backup_window": null,
+    "vcpus": 4,
+    "size": {
+      "price_monthly": 40,
+      "available": true,
+      "transfer": 5,
+      "price_hourly": 0.05952,
+      "regions": [
+        "ams2",
+        "ams3",
+        "blr1",
+        "fra1",
+        "lon1",
+        "nyc1",
+        "nyc2",
+        "nyc3",
+        "sfo1",
+        "sfo2",
+        "sgp1",
+        "tor1"
+      ],
+      "vcpus": 4,
+      "memory": 8192,
+      "disk": 160,
+      "slug": "s-4vcpu-8gb"
+    },
+    "image": {
+      "min_disk_size": 20,
+      "slug": "centos-7-x64",
+      "name": "7.5 x64",
+      "created_at": "2018-05-19T08:31:48Z",
+      "id": 34487567,
+      "regions": [
+        "nyc1",
+        "sfo1",
+        "nyc2",
+        "ams2",
+        "sgp1",
+        "lon1",
+        "nyc3",
+        "ams3",
+        "fra1",
+        "tor1",
+        "sfo2",
+        "blr1"
+      ],
+      "distribution": "CentOS",
+      "type": "snapshot",
+      "public": true,
+      "size_gigabytes": 0.44
+    },
+    "memory": 8192,
+    "region": {
+      "available": true,
+      "sizes": [
+        "512mb",
+        "1gb",
+        "s-1vcpu-1gb",
+        "s-3vcpu-1gb",
+        "s-1vcpu-2gb",
+        "2gb",
+        "s-2vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-4gb",
+        "4gb",
+        "s-4vcpu-8gb",
+        "8gb",
+        "m-1vcpu-8gb",
+        "16gb",
+        "s-6vcpu-16gb",
+        "m-16gb",
+        "s-8vcpu-32gb",
+        "m-32gb",
+        "32gb",
+        "s-12vcpu-48gb",
+        "48gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata",
+        "install_agent",
+        "image_transfer"
+      ],
+      "name": "Amsterdam 2",
+      "slug": "ams2"
+    },
+    "disk": 160,
+    "id": 132690656,
+    "tags": [],
+    "features": []
+  },
+  {
+    "status": "active",
+    "kernel": null,
+    "volume_ids": [],
+    "locked": false,
+    "name": "26a-rancher-0",
+    "backup_ids": [],
+    "created_at": "2019-02-11T22:12:01Z",
+    "snapshot_ids": [],
+    "size_slug": "s-4vcpu-8gb",
+    "networks": {
+      "v4": [
+        {
+          "type": "public",
+          "netmask": "255.255.255.0",
+          "ip_address": "146.185.133.14",
+          "gateway": "146.185.133.1"
+        }
+      ],
+      "v6": []
+    },
+    "next_backup_window": null,
+    "vcpus": 4,
+    "size": {
+      "price_monthly": 40,
+      "available": true,
+      "transfer": 5,
+      "price_hourly": 0.05952,
+      "regions": [
+        "ams2",
+        "ams3",
+        "blr1",
+        "fra1",
+        "lon1",
+        "nyc1",
+        "nyc2",
+        "nyc3",
+        "sfo1",
+        "sfo2",
+        "sgp1",
+        "tor1"
+      ],
+      "vcpus": 4,
+      "memory": 8192,
+      "disk": 160,
+      "slug": "s-4vcpu-8gb"
+    },
+    "image": {
+      "min_disk_size": 20,
+      "slug": "centos-7-x64",
+      "name": "7.5 x64",
+      "created_at": "2018-05-19T08:31:48Z",
+      "id": 34487567,
+      "regions": [
+        "nyc1",
+        "sfo1",
+        "nyc2",
+        "ams2",
+        "sgp1",
+        "lon1",
+        "nyc3",
+        "ams3",
+        "fra1",
+        "tor1",
+        "sfo2",
+        "blr1"
+      ],
+      "distribution": "CentOS",
+      "type": "snapshot",
+      "public": true,
+      "size_gigabytes": 0.44
+    },
+    "memory": 8192,
+    "region": {
+      "available": true,
+      "sizes": [
+        "512mb",
+        "1gb",
+        "s-1vcpu-1gb",
+        "s-3vcpu-1gb",
+        "s-1vcpu-2gb",
+        "2gb",
+        "s-2vcpu-2gb",
+        "s-1vcpu-3gb",
+        "s-2vcpu-4gb",
+        "4gb",
+        "s-4vcpu-8gb",
+        "8gb",
+        "m-1vcpu-8gb",
+        "16gb",
+        "s-6vcpu-16gb",
+        "m-16gb",
+        "s-8vcpu-32gb",
+        "m-32gb",
+        "32gb",
+        "s-12vcpu-48gb",
+        "48gb"
+      ],
+      "features": [
+        "private_networking",
+        "backups",
+        "ipv6",
+        "metadata",
+        "install_agent",
+        "image_transfer"
+      ],
+      "name": "Amsterdam 2",
+      "slug": "ams2"
+    },
+    "disk": 160,
+    "id": 132690657,
+    "tags": [],
+    "features": []
+  }
+]

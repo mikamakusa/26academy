@@ -6,4 +6,4 @@
   become: true
   become_method: sudo
   tasks:
-    - docker
+    - rancher

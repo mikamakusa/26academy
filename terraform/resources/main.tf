@@ -7,4 +7,5 @@ module "DO_droplets" {
   droplet = "${var.droplets}"
   project = "${var.project}"
   ssh_key = "${var.ssh_keys}"
+  tag     = "${var.tag}"
 }

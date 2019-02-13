@@ -9,3 +9,5 @@ variable "droplets" {
 variable "ssh_keys" {
   type = "list"
 }
+
+variable "tag" {}

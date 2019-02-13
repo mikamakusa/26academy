@@ -1,5 +1,7 @@
 project = "26a"
 
+tag = "rancher"
+
 ssh_keys = [
   {
     name = "rancher"

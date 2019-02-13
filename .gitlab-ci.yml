@@ -1,20 +1,81 @@
+image: centos:latest
+before_script:
+  - export DIGITALOCEAN_TOKEN=$DO_TOKEN
+  - export DO_API_TOKEN=$DO_TOKEN
+  - yum install -y curl
+
 stages:
-  - terraform
-  - ansible
+  - deploy
+  - docker_install
+  - rancher_install
+  - rancher_check
+  - join_rancher
+  - clean
 
-terraform:
-  variables:
-  image: hashicorp/terraform:light
-  stage: terraform
+deploy:
+  stage: deploy
+  before_script:
+    - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
+    - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/
+    - chmod +x /opt/terraform
+    - /opt/terraform version
   script:
-    - rm -rf =terraform/resources/.terraform
-    - terraform init terraform/resources
-    - terraform apply -auto-approve -var-file=terraform/resources/dovars.tfvars -var 'do_token=992a7d0efe4c641c84745c7e1602b71d5a29e9b05d6be2b7c6c521ac137769de' terraform/resources
+    - rm -rf terraform/resources/.terraform
+    - /opt/terraform init terraform/resources
+    - /opt/terraform apply -auto-approve -var-file=terraform/resources/dovars.tfvars terraform/resources
 
-ansible:
-  variables:
-    DO_API_TOKEN: "992a7d0efe4c641c84745c7e1602b71d5a29e9b05d6be2b7c6c521ac137769de"
-  image: ansible/centos7-ansible
-  stage: ansible
+docker_install:
+  stage: docker_install
+  before_script:
+    - yum install -y ansible python-pip
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
   script:
-    - ansible-playbook ansible/docker.yml -i digitalocean.py --private-key=ssh_keys/26apro2
+    - ansible-playbook ansible/docker.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2
+
+rancher_install:
+  stage: rancher_install
+  before_script:
+    - yum install -y ansible python-pip
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
+  script:
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "server"
+
+rancher_check:
+  stage: rancher_check
+  before_script:
+    - yum install -y ansible python-pip
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
+  script:
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "check"
+
+join_rancher:
+  stage: join_rancher
+  before_script:
+    - yum install -y ansible python-pip
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
+  script:
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "worker"
+
+clean:
+  stage: clean
+  before_script:
+    - curl https://releases.hashicorp.com/terraform/0.11.11/terraform_0.11.11_linux_amd64.zip -o /opt/terraform_0.11.11_linux_amd64.zip
+    - unzip /opt/terraform_0.11.11_linux_amd64.zip -d /opt/
+    - chmod +x /opt/terraform
+    - /opt/terraform version
+  script:
+    - /opt/terraform init terraform/resources
+    - /opt/terraform destroy -auto-approve -var-file=terraform/resources/dovars.tfvars terraform/resources
+  when: on_failure
