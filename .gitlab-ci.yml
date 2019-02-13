@@ -39,6 +39,7 @@ docker_install:
   script:
     - ansible-playbook ansible/docker.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2
   artifacts:
+    paths:
     - ansible/inventory.ini
 
 rancher_install:
