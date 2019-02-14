@@ -1,6 +1,16 @@
 ---
 # tasks file for rancher
 
+- name: Start Docker
+  systemd:
+    name: docker
+    state: started
+    enabled: true
+  ignore_errors: true
+  tags:
+    - server
+    - worker
+
 - name: determine if we're already running an agent
   shell: "docker ps | fgrep -q rancher/agent"
   register: agent_installed
@@ -19,56 +29,55 @@
   tags:
     - server
 
-- name: wait for rancher server is up and running
+- name: install jq
   become: true
-  wait_for:
-    delay: "600"
-    host: "127.0.0.1"
-    port: "80"
+  yum:
+    name: jq
+    state: installed
   ignore_errors: true
-  when: not agent_installed|success and ansible_hostname == '26a-rancher-0'
-  tags:
-    - check
-
-- name: Register Rancher server IP address
-  become: true
-  shell: hostname -I | awk -F " " '{print $1}'
-  regsiter: rancher_server_ip
-  ignore_errors: true
-  when: ansible_hostname == '26a-rancher-0'
   tags:
     - worker
 
-- name: Get Project Info
+- name: wait for rancher server is up and running
   become: true
-  shell: "curl http://localhost/v2-beta/projects/ | jq '.data[].id'"
-  regsiter: rancher_server_project
+  wait_for:
+    host: "{{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }}"
+    port: "80"
   ignore_errors: true
   when: ansible_hostname == '26a-rancher-0'
+  tags:
+    - check
+
+- name: Get Project Info
+  become: true
+  shell: "curl http://{{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }}/v2-beta/projects/ | jq -r '.data[].id'"
+  register: rancher_server_project
+  ignore_errors: true
+  when: ansible_hostname != '26a-rancher-0'
   tags:
     - worker
 
 - name: Get ResgistrationTokenId
   become: true
-  shell: "curl http://localhost/v2-beta/projects/{{ rancher_server_project.stdout }} | jq '.id'"
+  shell: "curl -X POST -H 'Accept: application/json' http://{{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }}/v2-beta/projects/{{ rancher_server_project.stdout }}/registrationtokens | jq -r '.links.self'"
   register: register_tokenid
   ignore_errors: true
-  when: ansible_hostname == '26a-rancher-0'
+  when: ansible_hostname != '26a-rancher-0'
   tags:
     - worker
 
 - name: Get RegistrationURL
   become: true
-  shell: curl http://localhost/v2-beta/projects/{{ rancher_server_project.stdout }} | jq '.registrationUrl'
+  shell: "curl -X GET -H 'Accept: application/json' {{ register_tokenid.stdout }} | jq -r '.command'"
   register: registration_url
   ignore_errors: true
-  when: ansible_hostname == '26a-rancher-0'
+  when: ansible_hostname != '26a-rancher-0'
   tags:
     - worker
 
 - name: Launch Rancher workers
   become: true
-  shell: "docker run -dit --name {{ ansible_hostname }} --rm --privileged -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/rancher:/var/lib/rancher rancher/agent:v1.2.11 {{ registration_url.stdout }}"
+  shell: "{{ registration_url.stdout }} "
   ignore_errors: true
   when: ansible_hostname != '26a-rancher-0'
   tags:
