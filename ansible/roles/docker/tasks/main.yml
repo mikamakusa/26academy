@@ -22,7 +22,7 @@
     state: installed
     update_cache: true
   ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "RedHat"
+  when: not docker_present|success
   with_items:
     - epel-release
     - yum-utils
@@ -35,51 +35,16 @@
     state: installed
     update_cache: true
   ignore_errors: true
-  when: not pip_present|success and ansible_os_familly == "RedHat"
+  when: not pip_present|success
   with_items:
-    - python36-pip
-    - python36
-
-- name: install pip (Debian)
-  easy_install: name=pip state=latest
-  when: not pip_present|success and ansible_os_familly == "Debian"
-
-- name: install additional dependencies (pip)
-  pip: name=docker-py state=present
-
-- name: Install Prerequisites
-  become: true
-  apt:
-    allow_unauthenticated: true
-    name: "{{ item }}"
-    state: "installed"
-    update_cache: true
-  ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "Debian"
-  with_items:
-    - apt-transport-https
-    - ca-certificates
-    - curl
-    - gnupg2
-    - software-properties-common
+    - python-pip
+    - python
 
 - name: Add Docker repository
   become: true
   shell: yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo
   ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "RedHat"
-
-- name: Add Docker GPG key
-  become: true
-  shell: "curl -fsSL https://download.docker.com/linux/debian/gpg | sudo apt-key add -"
-  ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "Debian"
-
-- name: add Docker repository
-  become: true
-  shell: "add-apt-repository \"deb [arch=amd64] https://download.docker.com/linux/debian $(lsb_release -cs) stable\""
-  ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "Debian"
+  when: not docker_present|success
 
 - name: Install Docker
   become: true
@@ -92,23 +57,13 @@
     - docker-ce-cli
     - containerd.io
   ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "RedHat"
+  when: not docker_present|success
   notify: docker start
 
-- name: Install Docker
+- name: install docker-py
   become: true
-  apt:
-    allow_unauthenticated: true
-    name: "{{ item }}"
-    state: installed
-    update_cache: true
-  with_items:
-    - docker-ce
-    - docker-ce-cli
-    - containerd.io
-  ignore_errors: true
-  when: not docker_present|success and ansible_os_familly == "Debian"
-  notify: docker start
+  pip:
+    name: docker-py
 
 - name: docker login to docker hub
   become: true

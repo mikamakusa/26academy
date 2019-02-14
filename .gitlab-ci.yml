@@ -29,7 +29,8 @@ deploy:
 docker_install:
   stage: docker_install
   before_script:
-    - DO_API_TOKEN=$DO_TOKEN
+    - export DO_API_TOKEN=$DO_TOKEN
+    - export ANSIBLE_HOST_KEY_CHECKING=False
     - yum install -y epel-release
     - yum install -y ansible python-pip jq
     - pip install --upgrade pip
@@ -45,29 +46,29 @@ docker_install:
 rancher_install:
   stage: rancher_install
   before_script:
-    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
     - yum install -y ansible
+    - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "server"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "server" --ssh-common-args="-o StrictHostKeyChecking=no"
 
 rancher_check:
   stage: rancher_check
   before_script:
-    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
     - yum install -y ansible
+    - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "check"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "check" --ssh-common-args="-o StrictHostKeyChecking=no"
 
 join_rancher:
   stage: join_rancher
   before_script:
-    - DO_API_TOKEN=$DO_TOKEN
     - yum install -y epel-release
     - yum install -y ansible
+    - export ANSIBLE_HOST_KEY_CHECKING=False
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "worker"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "worker" --ssh-common-args="-o StrictHostKeyChecking=no"
 
 clean:
   stage: clean
