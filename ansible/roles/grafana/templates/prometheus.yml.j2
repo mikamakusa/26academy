@@ -1,0 +1,46 @@
+# my global config
+global:
+  scrape_interval:     15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+  - static_configs:
+    - targets:
+      # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+ - job_name: consul
+   consul_sd_configs:
+     - server: '{{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }}:8500'
+   relabel_configs:
+     - source_labels: [__meta_consul_tags]
+       regex: .*,monitor,.*
+       action: keep
+     - source_labels: [__meta_consul_service]
+       target_label: service
+
+ - job_name: 'federate'
+   scrape_interval: 15s
+
+   honor_labels: true
+   metrics_path: '/federate'
+
+   params:
+     'match[]':
+       - '{job="prometheus"}'
+       - '{__name__=~"job:.*"}'
+
+   static_configs:
+     - targets:
+       - '{{ hostvars['26a-rancher-1'].ansible_default_ipv4.address }}:9090'
+       - '{{ hostvars['26a-rancher-2'].ansible_default_ipv4.address }}:9090'

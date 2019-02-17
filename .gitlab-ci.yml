@@ -6,6 +6,9 @@ stages:
   - rancher_install
   - rancher_check
   - join_rancher
+  - grafana
+  - bracelet
+  - api-store
   - clean
 
 deploy:
@@ -25,6 +28,10 @@ deploy:
     - terraform/resources/.terraform
     - terraform/resources/terraform.tfstate
     - terraform/resources/terraform.tfstate.backup
+  only:
+    changes:
+      - terraform/resources
+      - terraform/modules
 
 docker_install:
   stage: docker_install
@@ -42,33 +49,111 @@ docker_install:
   artifacts:
     paths:
     - ansible/inventory.ini
+  only:
+    changes:
+      - terraform
+      - ansible/docker.yml
+      - ansible/roles/docker
 
 rancher_install:
   stage: rancher_install
   before_script:
-    - yum install -y epel-release
-    - yum install -y ansible
+    - export DO_API_TOKEN=$DO_TOKEN
     - export ANSIBLE_HOST_KEY_CHECKING=False
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "server" --ssh-common-args="-o StrictHostKeyChecking=no"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 --tags "server" --ssh-common-args="-o StrictHostKeyChecking=no"
+  only:
+    changes:
+      - terraform
+      - ansible/rancher.yml
+      - ansible/roles/rancher
 
 rancher_check:
   stage: rancher_check
   before_script:
-    - yum install -y epel-release
-    - yum install -y ansible
+    - export DO_API_TOKEN=$DO_TOKEN
     - export ANSIBLE_HOST_KEY_CHECKING=False
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "check" --ssh-common-args="-o StrictHostKeyChecking=no"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 --tags "check" --ssh-common-args="-o StrictHostKeyChecking=no"
+  only:
+    changes:
+      - terraform
+      - ansible/rancher.yml
+      - ansible/roles/rancher
 
 join_rancher:
   stage: join_rancher
   before_script:
-    - yum install -y epel-release
-    - yum install -y ansible
+    - export DO_API_TOKEN=$DO_TOKEN
     - export ANSIBLE_HOST_KEY_CHECKING=False
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
   script:
-    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 -tags "worker" --ssh-common-args="-o StrictHostKeyChecking=no"
+    - ansible-playbook ansible/rancher.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 --tags "worker" --ssh-common-args="-o StrictHostKeyChecking=no"
+  only:
+    changes:
+      - terraform
+      - ansible/rancher.yml
+      - ansible/roles/rancher
+
+grafana:
+  stage: grafana
+  before_script:
+    - export DO_API_TOKEN=$DO_TOKEN
+    - export ANSIBLE_HOST_KEY_CHECKING=False
+    - yum install -y epel-release
+    - yum install -y ansible python-pip jq
+    - pip install --upgrade pip
+    - pip install requests
+    - chmod +x ansible/inventory.sh
+    - sh ansible/inventory.sh
+  script:
+    - ansible-playbook ansible/grafana.yml -i ansible/inventory.ini --private-key=ssh_keys/26apro2 --ssh-common-args="-o StrictHostKeyChecking=no"
+  only:
+    changes:
+      - terraform
+      - ansible/grafana.yml
+      - ansible/roles/grafana
+
+service: docker:dind
+bracelet:
+  stage: bracelet
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p DOCKER_PASSWORD
+  script:
+    - docker build -t mikamakusa/api_bracelet:latest docker/DevOps/Projet2/api-bracelet/
+    - docker push mikamakusa/api_bracelet:latest
+  only:
+    changes:
+      - docker/DevOps/Projet2/api-bracelet/
+
+service: docker:dind
+api-store:
+  stage: api-store
+  before_script:
+    - docker login -u $DOCKER_LOGIN -p DOCKER_PASSWORD
+  script:
+    - docker build -t mikamakusa/api_store:latest docker/DevOps/Projet2/api-store-to-db/
+    - docker push mikamakusa/api_store:latest
+  only:
+    changes:
+      - docker/DevOps/Projet2/api-store-to-db/
 
 clean:
   stage: clean

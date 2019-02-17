@@ -1,0 +1,140 @@
+---
+# tasks file for grafana
+
+- name: Download Prometheus
+  become: true
+  unarchive:
+    dest: "/opt/"
+    remote_src: true
+    src: "https://github.com/prometheus/prometheus/releases/download/v2.7.1/prometheus-2.7.1.linux-amd64.tar.gz"
+    mode: "0777"
+    owner: "root"
+    group: "root"
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Create Symlink for Prometheus
+  become: true
+  file:
+    path: "/opt/prometheus"
+    src: "/opt/prometheus-2.7.1.linux-amd64"
+    state: "link"
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Install Grafana
+  become: true
+  yum:
+    name: "https://dl.grafana.com/oss/release/grafana-5.4.3-1.x86_64.rpm"
+    state: installed
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Install Consul
+  become: true
+  unarchive:
+    dest: "/opt"
+    remote_src: true
+    src: "https://releases.hashicorp.com/consul/1.4.2/consul_1.4.2_linux_amd64.zip"
+    mode: "0777"
+    owner: "root"
+    group: "root"
+
+- name: Create Directories for Consul
+  become: true
+  file:
+    path: "/opt/{{ item }}"
+    state: directory
+  with_items:
+    - consul_data
+    - consul_conf
+
+- name: Install NodeExporter
+  become: true
+  unarchive:
+    dest: "/opt/"
+    remote_src: true
+    src: "https://github.com/prometheus/node_exporter/releases/download/v0.17.0/node_exporter-0.17.0.linux-amd64.tar.gz"
+    mode: "0777"
+    owner: "root"
+    group: "root"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: Start Rancher Exporter for Prometheus
+  become: true
+  shell: "docker run -d -e CATTLE_URL="http://{{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }}/v2-beta" -p 9173:9173 infinityworks/prometheus-rancher-exporter"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: "Create Consul Config file for NodeExporter"
+  become: true
+  copy:
+    content: |
+        {
+         "service": {
+           "name": "node_exporter",
+           "tags": ["monitor"],
+           "port": 9100
+         }
+        }
+    dest: "/opt/consul_conf"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: "Create Consul Config file for RancherExporter"
+  become: true
+  copy:
+    content: |
+        {
+         "service": {
+           "name": "rancher_exporter",
+           "tags": ["monitor"],
+           "port": 9173
+         }
+        }
+    dest: "/opt/consul_conf"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: Get Prometheus Config file
+  become: true
+  template:
+    src: "prometheus.yml.j2"
+    dest: "/opt/prometheus/prometheus.yml"
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Start NodeExporter
+  become: true
+  shell: "node_exporter"
+  args:
+    chdir: "/opt/node_exporter-0.17.0.linux-amd64"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: Start Consul Server
+  become: true
+  shell: "consul agent -bootstrap -advertise={{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }} -bind={{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }} -client={{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }} -data-dir=/opt/consul_data -server"
+  args:
+    chdir: "/opt/"
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Start Consul Worker
+  become: true
+  shell: "consul agent -advertise={{ ansible_ssh_host }} -join={{ hostvars['26a-rancher-0'].ansible_default_ipv4.address }} -config-dir=/opt/consul_conf/ -data-dir=/opt/consul_data"
+  args:
+    chdir: "/opt/"
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: Start Prometheus
+  become: true
+  shell: "prometheus --config.file /opt/prometheus/prometheus.yml"
+  args:
+    chdir: "/opt/prometheus/"
+  when: ansible_hostname == "26a-rancher-0"
+
+- name: Create Directory for Prometheus Configuration | Prometheus Workers to Federation
+  become: true
+  file:
+    path: "/opt/docker/prometheus"
+    state: directory
+  when: ansible_hostname != "26a-rancher-0"
+
+- name: Create Prometheus Config | Prometheus Workers to Federation
+  become: true
+  template:
+    src: "docker-prometheus.yml.j2"
+    dest: "/opt/docker/prometheus/prometheus.yml"
+  when: ansible_hostname != "26a-rancher-0"

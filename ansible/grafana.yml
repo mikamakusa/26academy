@@ -1,0 +1,8 @@
+---
+
+- hosts: docker
+  gather_facts: true
+  become: true
+  become_method: sudo
+  roles:
+    - grafana
